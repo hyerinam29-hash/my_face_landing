@@ -1,13 +1,16 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Package, Search, Sparkles } from "lucide-react"
+import { ArrowLeft, Package, Search, Sparkles, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import { Navigation } from "@/components/navigation"
+import { useUser } from "@clerk/nextjs"
+import { addToCart } from "@/actions/supabase"
+import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
 type ProductDetail = {
@@ -15,12 +18,16 @@ type ProductDetail = {
   image: string
   price: string
   volume: string
+  purchaseUrl?: string
 }
 
 export default function RecommendationPage() {
+  const { user, isLoaded } = useUser()
+  const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedProduct, setSelectedProduct] = useState<ProductDetail | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
 
   const productDetails: Record<string, ProductDetail[]> = {
     cleanser: [
@@ -32,26 +39,26 @@ export default function RecommendationPage() {
     toner: [
       { name: "수분 밸런싱 토너", image: "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021279202ko.jpg?l=ko", price: "19,9원", volume: "150ml" },
       { name: "AHA 각질 토너", image: "https://velloaskin.com/web/product/big/202105/6bc581b2f445cfddbb3193ab3eae67aa.jpg", price: "30,000원", volume: "150ml" },
-      { name: "저자극 진정 토너", image: "https://amarda.co.kr/web/product/medium/202504/708658eb3e0bd05a278785cdd27de4e1.png", price: "28,000원", volume: "200ml" },
-      { name: "BHA 수렴 토너", image: "https://images.unsplash.com/photo-1750085036912-b4bff0ddcd77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHxCSEElMjBza2luY2FyZSUyMHByb2R1Y3R8ZW58MHx8fHwxNzYyODI0NDA1fDA&ixlib=rb-4.1.0&q=80&w=1080", price: "32,000원", volume: "150ml" },
+      { name: "저자극 진정 토너", image: "https://images-kr.amoremall.com/products/111650000177/111650000177_01.jpg?1723599939544&format=webp&resize=550:550&shrink=550:550", price: "20,250원", volume: "150ml" },
+      { name: "BHA 수렴 토너", image: "https://cosrxinc.jpg3.kr/cosrximg/cosrx/product/vitamin_toner/vitamin_toner_04.jpg", price: "16500원", volume: "280ml" },
     ],
     serum: [
-      { name: "히알루론산 수분 세럼", image: "https://images.unsplash.com/photo-1685137562352-5db6e7495538?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUQlOUUlODglRUMlOTUlOEMlRUIlQTMlQTglRUIlQTElQTAlRUMlODIlQjAlMjAlRUMlODglOTglRUIlQjYlODQlMjAlRUMlODQlQjglRUIlOUYlQkMlMjBoeWFsdXJvbmljJTIwYWNpZCUyMHNlcnVtfGVufDB8fHx8MTc2MjgyNDM4MXww&ixlib=rb-4.1.0&q=80&w=1080", price: "35,000원", volume: "50ml" },
-      { name: "니아신아마이드 균일 세럼", image: "https://images.unsplash.com/photo-1608326389514-d9d2514e1933?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUIlOEIlODglRUMlOTUlODQlRUMlOEIlQTAlRUMlOTUlODQlRUIlQTclODglRUMlOUQlQjQlRUIlOTMlOUMlMjAlRUElQjclQTAlRUMlOUQlQkMlMjAlRUMlODQlQjglRUIlOUYlQkMlMjBuaWFjaW5hbWlkZSUyMHNlcnVtfGVufDB8fHx8MTc2MjgyNDM4Mnww&ixlib=rb-4.1.0&q=80&w=1080", price: "40,000원", volume: "30ml" },
-      { name: "비타민C 브라이트닝 세럼", image: "https://images.unsplash.com/photo-1648139347040-857f024f8da4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUIlQjklODQlRUQlODMlODAlRUIlQUYlQkNDJTIwJUVCJUI4JThDJUVCJTlEJUJDJUVDJTlEJUI0JUVEJThBJUI4JUVCJThCJTlEJTIwJUVDJTg0JUI4JUVCJTlGJUJDJTIwdml0YW1pbiUyMEMlMjBzZXJ1bXxlbnwwfHx8fDE3NjI4MjQzODN8MA&ixlib=rb-4.1.0&q=80&w=1080", price: "45,000원", volume: "30ml" },
-      { name: "펩타이드 리프팅 세럼", image: "https://images.unsplash.com/photo-1618120508902-c8d05e7985ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUQlOEUlQTklRUQlODMlODAlRUMlOUQlQjQlRUIlOTMlOUMlMjAlRUIlQTYlQUMlRUQlOTQlODQlRUQlOEMlODUlMjAlRUMlODQlQjglRUIlOUYlQkMlMjBwZXB0aWRlJTIwc2VydW18ZW58MHx8fHwxNzYyODI0Mzg0fDA&ixlib=rb-4.1.0&q=80&w=1080", price: "55,000원", volume: "30ml" },
+      { name: "히알루론산 수분 세럼", image: "https://cdn.ananti.kr/ej/1001573/prdt/2024/06/03/20240603164009645.303754.jpg", price: "28,000원", volume: "30ml" },
+      { name: "니아신아마이드 균일 세럼", image: "https://ecimg.cafe24img.com/pg798b18057154020/repiel/web/product/extra/big/20250708/24702e3cfa2ee7400a06b9b015fef65a.jpg", price: "24,000원", volume: "50ml" },
+      { name: "비타민C 브라이트닝 세럼", image: "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0019/A00000019269926ko.jpg?l=ko", price: "14,600원", volume: "40ml" },
+      { name: "펩타이드 리프팅 세럼", image: "https://forencos.com/web/product/extra/small/202412/6e89124f324ed60721244b81c8a22cfa.jpg", price: "19,900원", volume: "50ml" },
     ],
     cream: [
-      { name: "세라마이드 장벽 크림", image: "https://images.unsplash.com/photo-1728994062543-74a1dc2c9392?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUMlODQlQjglRUIlOUQlQkMlRUIlQTclODglRUMlOUQlQjQlRUIlOTMlOUMlMjAlRUMlOUUlQTUlRUIlQjIlQkQlMjAlRUQlODElQUMlRUIlQTYlQkMlMjBjZXJhbWlkZSUyMGNyZWFtfGVufDB8fHx8MTc2MjgyNDM4Nnww&ixlib=rb-4.1.0&q=80&w=1080", price: "38,000원", volume: "50ml" },
-      { name: "라이트 젤 크림", image: "https://images.unsplash.com/photo-1696881694567-cd1a97958fc8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUIlOUQlQkMlRUMlOUQlQjQlRUQlOEElQjglMjAlRUMlQTAlQTQlMjAlRUQlODElQUMlRUIlQTYlQkMlMjBsaWdodCUyMGdlbCUyMGNyZWFtfGVufDB8fHx8MTc2MjgyNDM4N3ww&ixlib=rb-4.1.0&q=80&w=1080", price: "32,000원", volume: "50ml" },
-      { name: "리치 밤 크림", image: "https://images.unsplash.com/photo-1605204768985-81bad5fd9d79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHxuaWdodCUyMGNyZWFtJTIwc2tpbmNhcmV8ZW58MHx8fHwxNzYyODI0NDA2fDA&ixlib=rb-4.1.0&q=80&w=1080", price: "42,000원", volume: "50ml" },
-      { name: "수분 크림", image: "https://images.unsplash.com/photo-1638609927040-8a7e97cd9d6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUMlODglOTglRUIlQjYlODQlMjAlRUQlODElQUMlRUIlQTYlQkMlMjBtb2lzdHVyaXppbmclMjBjcmVhbXxlbnwwfHx8fDE3NjI4MjQzODl8MA&ixlib=rb-4.1.0&q=80&w=1080", price: "28,000원", volume: "50ml" },
+      { name: "세라마이드 장벽 크림", image: "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/10/0000/0022/A00000022512706ko.jpg?qt=80", price: "25,000원", volume: "80ml" },
+      { name: "라이트 젤 크림", image: "https://cf.product-image.s.zigzag.kr/original/d/2025/3/31/13624_202503310941490892_77854.jpeg", price: "18,000원", volume: "75ml" },
+      { name: "리치 밤 크림", image: "https://caudalie-asia.imgix.net/media/catalog/product/1/_/1_premiercru_lacremeriche_caudalie_packshot.jpg?auto=format,compress&cs=srgb&fm=auto&w=1200", price: "170,000원", volume: "50ml" },
+      { name: "수분 크림", image: "https://wonjineffect.co.kr/web/product/extra/big/202311/042f4507f1ef7aa46013f925f609acd8.jpg", price: "28,000원", volume: "100ml" },
     ],
     sunscreen: [
-      { name: "논나노 무기자차", image: "https://images.unsplash.com/photo-1681916815996-9fdc49fe489a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUIlODUlQkMlRUIlODIlOTglRUIlODUlQjglMjAlRUIlQUMlQjQlRUElQjglQjAlRUMlOUUlOTAlRUMlQjAlQTglMjBtaW5lcmFsJTIwc3Vuc2NyZWVufGVufDB8fHx8MTc2MjgyNDM5MHww&ixlib=rb-4.1.0&q=80&w=1080", price: "25,000원", volume: "50ml" },
-      { name: "워터프루프 유기자차", image: "https://images.unsplash.com/photo-1600110116536-7a98859a927c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUMlOUIlOEMlRUQlODQlQjAlRUQlOTQlODQlRUIlQTMlQTglRUQlOTQlODQlMjAlRUMlOUMlQTAlRUElQjglQjAlRUMlOUUlOTAlRUMlQjAlQTglMjB3YXRlcnByb29mJTIwc3Vuc2NyZWVufGVufDB8fHx8MTc2MjgyNDM5MXww&ixlib=rb-4.1.0&q=80&w=1080", price: "28,000원", volume: "50ml" },
-      { name: "톤업 선크림", image: "https://images.unsplash.com/photo-1543364148-c43c4e908f47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUQlODYlQTQlRUMlOTclODUlMjAlRUMlODQlQTAlRUQlODElQUMlRUIlQTYlQkMlMjB0b25lJTIwdXAlMjBzdW5zY3JlZW58ZW58MHx8fHwxNzYyODI0MzkyfDA&ixlib=rb-4.1.0&q=80&w=1080", price: "30,000원", volume: "50ml" },
-      { name: "민감성 피부용 선크림", image: "https://images.unsplash.com/photo-1751821195194-0bbc1caab446?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MTU3ODB8MHwxfHNlYXJjaHwxfHwlRUIlQUYlQkMlRUElQjAlOTAlRUMlODQlQjElMjAlRUQlOTQlQkMlRUIlQjYlODAlRUMlOUElQTklMjAlRUMlODQlQTAlRUQlODElQUMlRUIlQTYlQkMlMjBzZW5zaXRpdmUlMjBza2luJTIwc3Vuc2NyZWVufGVufDB8fHx8MTc2MjgyNDM5M3ww&ixlib=rb-4.1.0&q=80&w=1080", price: "32,000원", volume: "50ml" },
+      { name: "논나노 무기자차", image: "https://godomall.speedycdn.net/e36a84f0dca2fbb1ee1887a280d33ba4/goods/1000015569/image/add2/1000015569_add2_071.jpg", price: "17,900원", volume: "50ml" },
+      { name: "워터프루프 유기자차", image: "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0022/A00000022718806ko.jpg?l=ko", price: "17,500원", volume: "100ml" },
+      { name: "톤업 선크림", image: "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/10/0000/0020/A00000020061459ko.jpg?qt=80", price: "51,000원", volume: "50ml+50ml" },
+      { name: "민감성 피부용 선크림", image: "https://fs.dr-g.co.kr/item/4415/4415-add1.jpg?202511011123", price: "16,800원", volume: "35ml" },
     ],
   }
 
@@ -76,6 +83,76 @@ export default function RecommendationPage() {
     ...cat,
     items: cat.items.filter((item) => item.toLowerCase().includes(searchQuery.toLowerCase())),
   }))
+
+  async function handlePurchase() {
+    if (!selectedProduct) return
+    
+    // 이미지 링크를 새 창에서 열기
+    window.open(selectedProduct.image, '_blank')
+    console.log("[purchase] Opening product image link", { image: selectedProduct.image })
+  }
+
+  async function handleAddToCart() {
+    if (!selectedProduct) return
+    
+    if (!isLoaded) {
+      toast({
+        title: "로딩 중",
+        description: "잠시만 기다려주세요.",
+      })
+      return
+    }
+
+    if (!user) {
+      toast({
+        title: "로그인 필요",
+        description: "장바구니에 추가하려면 로그인이 필요합니다.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsAddingToCart(true)
+    try {
+      await addToCart({
+        name: selectedProduct.name,
+        image: selectedProduct.image,
+        price: selectedProduct.price,
+        volume: selectedProduct.volume,
+        userId: user.id,
+      })
+      console.log("[cart] Product added to cart", { product: selectedProduct.name, userId: user.id })
+      toast({
+        title: "장바구니에 추가됨",
+        description: `${selectedProduct.name}이(가) 장바구니에 추가되었습니다.`,
+      })
+      // 장바구니 페이지로 이동하도록 안내
+      setTimeout(() => {
+        if (window.confirm("장바구니로 이동하시겠습니까?")) {
+          window.location.href = "/cart"
+        }
+      }, 500)
+    } catch (error: any) {
+      console.error("[cart] Error adding to cart", error)
+      
+      // 에러 메시지에 따라 더 자세한 안내 제공
+      let errorMessage = error.message || "장바구니 추가 중 오류가 발생했습니다."
+      
+      // Supabase 테이블이 없는 경우 안내
+      if (errorMessage.includes("테이블이 없습니다")) {
+        errorMessage += "\n\nSupabase 대시보드에서 'cart' 테이블을 생성해주세요."
+      }
+      
+      toast({
+        title: "오류 발생",
+        description: errorMessage,
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsAddingToCart(false)
+    }
+  }
 
   return (
     <main className="min-h-screen">
@@ -224,11 +301,20 @@ export default function RecommendationPage() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Button 
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                  onClick={handlePurchase}
+                >
                   구매하기
                 </Button>
-                <Button variant="outline" className="flex-1">
-                  찜하기
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={handleAddToCart}
+                  disabled={isAddingToCart}
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  {isAddingToCart ? "추가 중..." : "찜하기"}
                 </Button>
               </div>
             </div>

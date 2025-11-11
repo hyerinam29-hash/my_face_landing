@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ShoppingCart } from "lucide-react"
 
 export function Navigation() {
   return (
@@ -39,6 +40,11 @@ export function Navigation() {
                 </Link>
               </SignedOut>
               <SignedIn>
+                <Link href="/cart">
+                  <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart className="w-5 h-5" />
+                  </Button>
+                </Link>
                 <UserButton
                   appearance={{
                     elements: {
