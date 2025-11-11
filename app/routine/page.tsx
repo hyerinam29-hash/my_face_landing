@@ -194,58 +194,103 @@ export default function RoutinePage() {
                 </div>
 
                 {notificationsEnabled && (
-                  <div className="grid grid-cols-1 gap-6 pt-4 border-t border-border">
-                    <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">아침 알림 시간</label>
-                      <input
-                        type="time"
-                        value={morningTime}
-                        onChange={(e) => setMorningTime(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground"
-                      />
+                  <div className="grid grid-cols-1 gap-9 pt-4 border-t border-border">
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-sm font-medium text-foreground mb-2 block">아침 알림 시간</label>
+                        <input
+                          type="time"
+                          value={morningTime}
+                          onChange={(e) => setMorningTime(e.target.value)}
+                          className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground"
+                        />
+                      </div>
+                      <Button
+                        onClick={() => {
+                          // localStorage에서 기존 설정 가져오기
+                          const existingData = localStorage.getItem("routineNotification")
+                          let notificationData: { enabled: boolean; morningTime: string; nightTime: string } = {
+                            enabled: true,
+                            morningTime: morningTime,
+                            nightTime: nightTime
+                          }
+
+                          if (existingData) {
+                            try {
+                              const parsed = JSON.parse(existingData)
+                              notificationData = {
+                                enabled: true,
+                                morningTime: morningTime,
+                                nightTime: parsed.nightTime || nightTime
+                              }
+                            } catch (e) {
+                              // 파싱 오류 시 기본값 사용
+                            }
+                          }
+
+                          // 아침 알림 시간만 저장
+                          localStorage.setItem("routineNotification", JSON.stringify(notificationData))
+                          toast({
+                            title: "아침 알림 시간 저장 완료",
+                            description: `아침 알림 시간이 ${morningTime}으로 설정되었습니다.`,
+                          })
+                          // Navigation 컴포넌트에 변경사항 알림
+                          window.dispatchEvent(new Event("routineNotificationChange"))
+                        }}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      >
+                        설정 저장
+                      </Button>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">저녁 알림 시간</label>
-                      <input
-                        type="time"
-                        value={nightTime}
-                        onChange={(e) => setNightTime(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground"
-                      />
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-sm font-medium text-foreground mb-2 block">저녁 알림 시간</label>
+                        <input
+                          type="time"
+                          value={nightTime}
+                          onChange={(e) => setNightTime(e.target.value)}
+                          className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground"
+                        />
+                      </div>
+                      <Button
+                        onClick={() => {
+                          // localStorage에서 기존 설정 가져오기
+                          const existingData = localStorage.getItem("routineNotification")
+                          let notificationData: { enabled: boolean; morningTime: string; nightTime: string } = {
+                            enabled: true,
+                            morningTime: morningTime,
+                            nightTime: nightTime
+                          }
+
+                          if (existingData) {
+                            try {
+                              const parsed = JSON.parse(existingData)
+                              notificationData = {
+                                enabled: true,
+                                morningTime: parsed.morningTime || morningTime,
+                                nightTime: nightTime
+                              }
+                            } catch (e) {
+                              // 파싱 오류 시 기본값 사용
+                            }
+                          }
+
+                          // 저녁 알림 시간만 저장
+                          localStorage.setItem("routineNotification", JSON.stringify(notificationData))
+                          toast({
+                            title: "저녁 알림 시간 저장 완료",
+                            description: `저녁 알림 시간이 ${nightTime}으로 설정되었습니다.`,
+                          })
+                          // Navigation 컴포넌트에 변경사항 알림
+                          window.dispatchEvent(new Event("routineNotificationChange"))
+                        }}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      >
+                        설정 저장
+                      </Button>
                     </div>
                   </div>
                 )}
-
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    onClick={() => {
-                      if (notificationsEnabled) {
-                        // localStorage에 알림 설정 저장
-                        localStorage.setItem("routineNotification", JSON.stringify({
-                          enabled: true,
-                          morningTime: morningTime,
-                          nightTime: nightTime
-                        }))
-                        toast({
-                          title: "알림 설정 완료",
-                          description: `아침 ${morningTime}, 저녁 ${nightTime}에 알림이 설정되었습니다.`,
-                        })
-                      } else {
-                        // 알림 비활성화 시 localStorage에서 제거
-                        localStorage.removeItem("routineNotification")
-                        toast({
-                          title: "알림이 비활성화되었습니다",
-                          description: "알림을 받으려면 알림을 활성화해주세요.",
-                        })
-                      }
-                      // Navigation 컴포넌트에 변경사항 알림
-                      window.dispatchEvent(new Event("routineNotificationChange"))
-                    }}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
-                    설정 저장
-                  </Button>
-                </div>
               </div>
             </div>
           </section>
