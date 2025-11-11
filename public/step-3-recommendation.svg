@@ -1,0 +1,41 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pastel gradient background -->
+  <rect width="400" height="300" fill="#FFF8F0"/>
+  
+  <!-- Product bottles -->
+  <rect x="120" y="80" width="40" height="80" rx="8" fill="#FFE4D0"/>
+  <rect x="125" y="85" width="30" height="10" rx="5" fill="#FFC9A0"/>
+  
+  <rect x="180" y="80" width="40" height="80" rx="8" fill="#FFDAC0"/>
+  <rect x="185" y="85" width="30" height="10" rx="5" fill="#FFB890"/>
+  
+  <rect x="240" y="80" width="40" height="80" rx="8" fill="#FFD0B0"/>
+  <rect x="245" y="85" width="30" height="10" rx="5" fill="#FFA070"/>
+  
+  <!-- Checkmarks -->
+  <circle cx="140" cy="180" r="12" fill="#A0E0D0"/>
+  <path d="M 135 180 L 138 183 L 145 176" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <circle cx="200" cy="180" r="12" fill="#A0E0D0"/>
+  <path d="M 195 180 L 198 183 L 205 176" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <circle cx="260" cy="180" r="12" fill="#A0E0D0"/>
+  <path d="M 255 180 L 258 183 L 265 176" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Sparkles -->
+  <circle cx="100" cy="100" r="4" fill="#FFE0C0"/>
+  <circle cx="300" cy="120" r="3" fill="#FFE0C0"/>
+  <circle cx="290" cy="90" r="5" fill="#FFD0A0"/>
+  <circle cx="110" cy="140" r="3" fill="#FFE0C0"/>
+  
+  <!-- Stars -->
+  <path d="M 320 100 L 322 105 L 327 106 L 323 110 L 324 115 L 320 112 L 316 115 L 317 110 L 313 106 L 318 105 Z" fill="#FFB890"/>
+  <path d="M 90 120 L 92 124 L 96 125 L 92 128 L 93 132 L 90 130 L 87 132 L 88 128 L 84 125 L 88 124 Z" fill="#FFB890"/>
+  
+  <!-- Text -->
+  <text x="200" y="260" font-family="sans-serif" font-size="16" fill="#FF9A70" text-anchor="middle" font-weight="600">맞춤 추천</text>
+</svg>
+
+
+
+

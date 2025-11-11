@@ -1,0 +1,30 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pastel gradient background -->
+  <rect width="400" height="300" fill="#FFF5F5"/>
+  
+  <!-- Phone frame -->
+  <rect x="120" y="60" width="160" height="180" rx="20" fill="#FFE5E5"/>
+  <rect x="130" y="70" width="140" height="160" rx="10" fill="white"/>
+  
+  <!-- Face circle -->
+  <circle cx="200" cy="130" r="40" fill="#FFD4D4"/>
+  
+  <!-- Eyes -->
+  <circle cx="190" cy="125" r="5" fill="#FF8FA3"/>
+  <circle cx="210" cy="125" r="5" fill="#FF8FA3"/>
+  
+  <!-- Smile -->
+  <path d="M 185 140 Q 200 150 215 140" stroke="#FF8FA3" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Camera sparkles -->
+  <circle cx="150" cy="100" r="4" fill="#FFB4C8"/>
+  <circle cx="250" cy="120" r="3" fill="#FFB4C8"/>
+  <circle cx="240" cy="90" r="5" fill="#FFB4C8"/>
+  
+  <!-- Text -->
+  <text x="200" y="260" font-family="sans-serif" font-size="16" fill="#FF8FA3" text-anchor="middle" font-weight="600">사진 촬영</text>
+</svg>
+
+
+
+
