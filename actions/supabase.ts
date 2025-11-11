@@ -107,19 +107,44 @@ export async function addToCart(product: {
       body: JSON.stringify(payload)
     })
   } catch (e: any) {
-    console.error("[cart] Supabase network error", e?.message || e, {
-      url: supabaseUrl,
+    const debugEnabled = process.env.DEBUG_SUPABASE === 'true' || process.env.NODE_ENV !== 'production'
+    const maskedKey = supabaseKey ? `${supabaseKey.slice(0, 6)}...` : ''
+    const isHttps = typeof supabaseUrl === 'string' ? supabaseUrl.startsWith('https://') : false
+    const debugContext = {
+      url: supabaseUrl || '(empty)',
+      isHttps,
       hasKey: !!supabaseKey,
+      keyPrefix: maskedKey,
       errorType: e?.name,
-      errorStack: e?.stack
-    })
-    
-    // 네트워크 오류인 경우 더 자세한 정보 제공
-    if (e?.message?.includes('fetch') || e?.code === 'ENOTFOUND' || e?.code === 'ECONNREFUSED') {
-      throw new Error(`Supabase 서버에 연결할 수 없습니다. URL과 네트워크 연결을 확인해주세요. (${e?.message || '네트워크 오류'})`)
+      errorCode: e?.code,
     }
-    
-    throw new Error(`장바구니 추가 중 네트워크 오류가 발생했습니다: ${e?.message || '알 수 없는 오류'}`)
+
+    console.error("[cart] Supabase network error", e?.message || e, debugContext)
+
+    // 사용자 친화적 메시지 + 선택적 디버그 부가정보
+    let userMessage =
+      `Supabase 서버에 연결할 수 없습니다. URL과 네트워크 연결을 확인해주세요. (${e?.message || '네트워크 오류'})`
+
+    if (!supabaseUrl) {
+      userMessage += " 환경변수(SUPABASE_URL 또는 NEXT_PUBLIC_SUPABASE_URL)가 비어있습니다."
+    }
+    if (!supabaseKey) {
+      userMessage += " 환경변수(SUPABASE_ANON_KEY 또는 NEXT_PUBLIC_SUPABASE_ANON_KEY)가 비어있습니다."
+    }
+    if (!isHttps && supabaseUrl) {
+      userMessage += " URL은 반드시 https로 시작해야 합니다."
+    }
+
+    if (debugEnabled) {
+      userMessage += ` [debug:${JSON.stringify(debugContext)}]`
+    }
+
+    // 대표적인 네트워크 코드를 별도로 처리
+    if (e?.message?.includes('fetch') || e?.code === 'ENOTFOUND' || e?.code === 'ECONNREFUSED' || e?.code === 'CERT_HAS_EXPIRED') {
+      throw new Error(userMessage)
+    }
+
+    throw new Error(`장바구니 추가 중 네트워크 오류가 발생했습니다: ${e?.message || '알 수 없는 오류'}` + (debugEnabled ? ` [debug:${JSON.stringify(debugContext)}]` : ''))
   }
 
   if (!res.ok) {
