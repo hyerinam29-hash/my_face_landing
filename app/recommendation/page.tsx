@@ -12,6 +12,7 @@ import { useUser } from "@clerk/nextjs"
 import { addToCart } from "@/actions/supabase"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 type ProductDetail = {
   name: string
@@ -22,6 +23,7 @@ type ProductDetail = {
 }
 
 export default function RecommendationPage() {
+  const router = useRouter()
   const { user, isLoaded } = useUser()
   const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
@@ -126,12 +128,8 @@ export default function RecommendationPage() {
         title: "장바구니에 추가됨",
         description: `${selectedProduct.name}이(가) 장바구니에 추가되었습니다.`,
       })
-      // 장바구니 페이지로 이동하도록 안내
-      setTimeout(() => {
-        if (window.confirm("장바구니로 이동하시겠습니까?")) {
-          window.location.href = "/cart"
-        }
-      }, 500)
+      // 장바구니 페이지로 자동 이동
+      router.push("/cart")
     } catch (error: any) {
       console.error("[cart] Error adding to cart", error)
       
