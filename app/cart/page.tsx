@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, ShoppingCart, Trash2, Package } from "lucide-react"
+import { ArrowLeft, ShoppingCart, Trash2, Package, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Navigation } from "@/components/navigation"
 import { useUser } from "@clerk/nextjs"
@@ -79,9 +79,56 @@ export default function CartPage() {
     }
   }
 
-  function handlePurchase(imageUrl: string) {
+  // 가격 문자열에서 숫자만 추출하는 함수
+  function parsePrice(priceString: string): number {
+    const cleaned = priceString.replace(/[^0-9]/g, '')
+    return parseInt(cleaned) || 0
+  }
+
+  // 총 금액 계산
+  function calculateTotal(): number {
+    return cartItems.reduce((sum, item) => sum + parsePrice(item.price), 0)
+  }
+
+  // 개별 제품 구매하기 (외부 링크)
+  function handlePurchaseItem(imageUrl: string) {
     window.open(imageUrl, '_blank')
     console.log("[purchase] Opening product image link", { image: imageUrl })
+  }
+
+  // 전체 결제하기
+  function handleCheckout() {
+    if (cartItems.length === 0) {
+      toast({
+        title: "장바구니가 비어있습니다",
+        description: "결제할 제품이 없습니다.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    const total = calculateTotal()
+    console.log("[checkout] Starting checkout", { 
+      itemCount: cartItems.length, 
+      totalPrice: total 
+    })
+
+    toast({
+      title: "결제 준비 중",
+      description: `총 ${total.toLocaleString()}원의 제품을 결제합니다.`,
+    })
+
+    // 실제 결제 시스템 연동은 여기에 구현
+    // 예: 결제 페이지로 이동, 결제 API 호출 등
+    // 현재는 시뮬레이션
+    setTimeout(() => {
+      toast({
+        title: "결제 완료",
+        description: "결제가 완료되었습니다. 감사합니다!",
+      })
+      // 결제 완료 후 장바구니 비우기
+      setCartItems([])
+    }, 2000)
   }
 
   if (!isLoaded) {
@@ -197,10 +244,10 @@ export default function CartPage() {
                       {/* Actions */}
                       <div className="flex flex-col md:flex-row gap-2">
                         <Button
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                          onClick={() => handlePurchase(item.image)}
+                          variant="outline"
+                          onClick={() => handlePurchaseItem(item.image)}
                         >
-                          구매하기
+                          바로 구매
                         </Button>
                         <Button
                           variant="outline"
@@ -217,6 +264,42 @@ export default function CartPage() {
               </div>
             )}
           </section>
+
+          {/* Checkout Section */}
+          {!isLoading && cartItems.length > 0 && (
+            <section className="py-12 border-t border-border">
+              <div className="bg-card border border-border rounded-xl p-6 shadow-md">
+                <h2 className="font-serif text-2xl font-bold text-foreground mb-6">결제 정보</h2>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">제품 수</span>
+                    <span className="font-semibold text-foreground">{cartItems.length}개</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="font-semibold text-foreground">총 결제 금액</span>
+                    <span className="font-bold text-primary text-2xl">
+                      {calculateTotal().toLocaleString()}원
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-border">
+                  <Button
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6"
+                    onClick={handleCheckout}
+                  >
+                    <CreditCard className="w-5 h-5 mr-2" />
+                    결제하기
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground mt-4 text-center">
+                  결제하기 버튼을 클릭하면 결제가 진행됩니다.
+                </p>
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </main>

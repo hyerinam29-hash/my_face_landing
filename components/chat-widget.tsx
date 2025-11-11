@@ -97,7 +97,7 @@ export default function ChatWidget() {
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 w-[416px] h-[calc(30vh+2cm)] bg-[var(--color-popover)] border border-[var(--color-border)] rounded-2xl shadow-2xl flex flex-col">
+        <div className="fixed bottom-24 right-6 w-[416px] h-[calc(45vh+3cm)] bg-[var(--color-popover)] border border-[var(--color-border)] rounded-2xl shadow-2xl flex flex-col">
           <div className="p-4 border-b border-[var(--color-border)]">
             <div className="text-base font-semibold">페이스 캘린더 상담</div>
             <div className="text-xs text-gray-500 mt-0.5">피부 목표를 알려주시면 맞춤 가이드를 드려요</div>

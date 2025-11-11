@@ -1,6 +1,6 @@
 "use server"
 
-import { getNotionHeaders, NOTION_DATABASE_ID } from "@/lib/notion"
+import { getNotionHeaders, getNotionDatabaseId } from "@/lib/notion"
 
 export async function submitLead(formData: FormData): Promise<void> {
   const name = String(formData.get("name") ?? "").trim()
@@ -12,7 +12,7 @@ export async function submitLead(formData: FormData): Promise<void> {
   }
 
   const body = {
-    parent: { database_id: NOTION_DATABASE_ID },
+    parent: { database_id: getNotionDatabaseId() },
     properties: {
       name: { title: [{ text: { content: name } }] },
       "phone number": { phone_number: phone },
@@ -36,7 +36,7 @@ export async function submitLead(formData: FormData): Promise<void> {
 // Start free trial lead using explicit args (for client-side calls)
 export async function createTrialLead({ name, email, phone }: { name: string; email: string; phone: string }): Promise<void> {
   const body = {
-    parent: { database_id: NOTION_DATABASE_ID },
+    parent: { database_id: getNotionDatabaseId() },
     properties: {
       name: { title: [{ text: { content: name } }] },
       "phone number": { phone_number: phone },
@@ -61,7 +61,7 @@ export async function createTrialLead({ name, email, phone }: { name: string; em
 export async function logChatMessage({ role, content }: { role: 'user' | 'assistant'; content: string }): Promise<void> {
   const title = `${role.toUpperCase()} 메시지`
   const body = {
-    parent: { database_id: NOTION_DATABASE_ID },
+    parent: { database_id: getNotionDatabaseId() },
     properties: {
       name: { title: [{ text: { content: title } }] },
       message: { rich_text: [{ text: { content } }] },
@@ -84,7 +84,7 @@ export async function logChatMessage({ role, content }: { role: 'user' | 'assist
 // Save consultation lead (name/email/phone) to Notion
 export async function saveConsultLead({ name, email, phone }: { name: string; email: string; phone: string }): Promise<void> {
   const body = {
-    parent: { database_id: NOTION_DATABASE_ID },
+    parent: { database_id: getNotionDatabaseId() },
     properties: {
       name: { title: [{ text: { content: name } }] },
       email: { email },
@@ -107,7 +107,7 @@ export async function saveConsultLead({ name, email, phone }: { name: string; em
 
 // List consultation leads (first 20)
 export async function listConsultLeads(): Promise<{ id: string; name: string; email?: string; phone?: string }[]> {
-  const res = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
+  const res = await fetch(`https://api.notion.com/v1/databases/${getNotionDatabaseId()}/query`, {
     method: "POST",
     headers: getNotionHeaders(),
     body: JSON.stringify({ page_size: 20, sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }),
