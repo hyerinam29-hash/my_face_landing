@@ -194,7 +194,7 @@ export default function RoutinePage() {
                 </div>
 
                 {notificationsEnabled && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
+                  <div className="grid grid-cols-1 gap-6 pt-4 border-t border-border">
                     <div>
                       <label className="text-sm font-medium text-foreground mb-2 block">아침 알림 시간</label>
                       <input
@@ -220,16 +220,26 @@ export default function RoutinePage() {
                   <Button
                     onClick={() => {
                       if (notificationsEnabled) {
+                        // localStorage에 알림 설정 저장
+                        localStorage.setItem("routineNotification", JSON.stringify({
+                          enabled: true,
+                          morningTime: morningTime,
+                          nightTime: nightTime
+                        }))
                         toast({
                           title: "알림 설정 완료",
                           description: `아침 ${morningTime}, 저녁 ${nightTime}에 알림이 설정되었습니다.`,
                         })
                       } else {
+                        // 알림 비활성화 시 localStorage에서 제거
+                        localStorage.removeItem("routineNotification")
                         toast({
                           title: "알림이 비활성화되었습니다",
                           description: "알림을 받으려면 알림을 활성화해주세요.",
                         })
                       }
+                      // Navigation 컴포넌트에 변경사항 알림
+                      window.dispatchEvent(new Event("routineNotificationChange"))
                     }}
                     className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >

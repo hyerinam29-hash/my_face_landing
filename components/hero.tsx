@@ -91,11 +91,6 @@ export function Hero() {
                   </form>
                 </DialogContent>
               </Dialog>
-              <a href="/diagnosis">
-                <Button size="lg" variant="outline" className="text-base bg-transparent">
-                  7일 무료 체험 시작하기
-                </Button>
-              </a>
             </div>
 
             <div className="flex items-center gap-8 pt-4">

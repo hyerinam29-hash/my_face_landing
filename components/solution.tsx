@@ -203,17 +203,17 @@ export function Solution() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
           {features.map((feature, index) => {
             const card = (
               <div
-                className="group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all hover:shadow-xl"
+                className="group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all hover:shadow-xl h-full flex flex-col"
               >
-                <div className="flex items-start gap-6">
+                <div className="flex items-start gap-6 flex-1">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <h3 className="text-xl font-bold text-foreground">{feature.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
                   </div>
@@ -223,7 +223,7 @@ export function Solution() {
 
             if (feature.title === "AI 피부 진단") {
               return (
-                <Link key={index} href="/diagnosis" className="text-left focus:outline-none w-full block">
+                <Link key={index} href="/diagnosis" className="text-left focus:outline-none w-full block h-full">
                   {card}
                 </Link>
               )
@@ -233,7 +233,7 @@ export function Solution() {
               return (
                 <Dialog key={index} open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <button className="text-left focus:outline-none w-full" aria-label="AI 피부 진단 시작">
+                    <button className="text-left focus:outline-none w-full h-full" aria-label="AI 피부 진단 시작">
                       {card}
                     </button>
                   </DialogTrigger>
@@ -287,7 +287,7 @@ export function Solution() {
 
             if (feature.title === "맞춤형 화장품 추천") {
               return (
-                <Link key={index} href="/recommendation" className="text-left focus:outline-none w-full block">
+                <Link key={index} href="/recommendation" className="text-left focus:outline-none w-full block h-full">
                   {card}
                 </Link>
               )
@@ -305,7 +305,7 @@ export function Solution() {
               return (
                 <Dialog key={index} open={recoOpen} onOpenChange={setRecoOpen}>
                   <DialogTrigger asChild>
-                    <button className="text-left focus:outline-none w-full" aria-label="맞춤형 화장품 추천 보기">
+                    <button className="text-left focus:outline-none w-full h-full" aria-label="맞춤형 화장품 추천 보기">
                       {card}
                     </button>
                   </DialogTrigger>
@@ -348,7 +348,7 @@ export function Solution() {
 
             if (feature.title === "중복 화장품 감지") {
               return (
-                <Link key={index} href="/duplicate" className="text-left focus:outline-none w-full block">
+                <Link key={index} href="/duplicate" className="text-left focus:outline-none w-full block h-full">
                   {card}
                 </Link>
               )
@@ -358,7 +358,7 @@ export function Solution() {
               return (
                 <Dialog key={index} open={dupOpen} onOpenChange={setDupOpen}>
                   <DialogTrigger asChild>
-                    <button className="text-left focus:outline-none w-full" aria-label="중복 화장품 감지 열기">
+                    <button className="text-left focus:outline-none w-full h-full" aria-label="중복 화장품 감지 열기">
                       {card}
                     </button>
                   </DialogTrigger>
@@ -417,7 +417,7 @@ export function Solution() {
 
             if (feature.title === "시간별 루틴 알림") {
               return (
-                <Link key={index} href="/routine" className="text-left focus:outline-none w-full block">
+                <Link key={index} href="/routine" className="text-left focus:outline-none w-full block h-full">
                   {card}
                 </Link>
               )
@@ -453,7 +453,7 @@ export function Solution() {
               return (
                 <Dialog key={index} open={routineOpen} onOpenChange={setRoutineOpen}>
                   <DialogTrigger asChild>
-                    <button className="text-left focus:outline-none w-full" aria-label="시간별 루틴 알림 보기">
+                    <button className="text-left focus:outline-none w-full h-full" aria-label="시간별 루틴 알림 보기">
                       {card}
                     </button>
                   </DialogTrigger>

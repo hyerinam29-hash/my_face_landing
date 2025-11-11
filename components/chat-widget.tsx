@@ -4,6 +4,101 @@ import { useState } from 'react'
 
 type Message = { role: 'user' | 'model'; content: string }
 
+// 텍스트를 가독성 있게 포맷팅하는 함수
+function formatMessage(content: string): React.ReactNode {
+  if (!content) return content
+
+  // 줄바꿈 처리
+  const lines = content.split('\n')
+  const formatted: React.ReactNode[] = []
+
+  lines.forEach((line, index) => {
+    // 빈 줄 처리
+    if (line.trim() === '') {
+      formatted.push(<div key={`empty-${index}`} className="h-2" />)
+      return
+    }
+
+    // 리스트 항목 처리 (1. 2. 3. 또는 - * • 등)
+    const listMatch = line.match(/^(\d+\.\s|[-*•]\s)(.+)/)
+    if (listMatch) {
+      formatted.push(
+        <div key={`list-${index}`} className="flex items-start gap-2 my-1.5">
+          <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+          <span className="flex-1 leading-relaxed">{formatInlineText(listMatch[2])}</span>
+        </div>
+      )
+      return
+    }
+
+    // 일반 텍스트 줄
+    formatted.push(
+      <div key={`line-${index}`} className="my-1.5 leading-relaxed">
+        {formatInlineText(line)}
+      </div>
+    )
+  })
+
+  return <div className="space-y-0.5">{formatted}</div>
+}
+
+// 인라인 텍스트 포맷팅 (볼드, 이탤릭 등)
+function formatInlineText(text: string): React.ReactNode {
+  if (!text) return text
+
+  const parts: React.ReactNode[] = []
+  let lastIndex = 0
+  let keyIndex = 0
+
+  // 볼드 처리 (**텍스트**)
+  const boldRegex = /\*\*(.+?)\*\*/g
+  let match
+
+  while ((match = boldRegex.exec(text)) !== null) {
+    // 볼드 앞의 텍스트
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index))
+    }
+    // 볼드 텍스트
+    parts.push(
+      <strong key={`bold-${keyIndex++}`} className="font-semibold text-foreground">
+        {match[1]}
+      </strong>
+    )
+    lastIndex = match.index + match[0].length
+  }
+
+  // 남은 텍스트
+  if (lastIndex < text.length) {
+    const remaining = text.substring(lastIndex)
+    // 이탤릭 처리 (*텍스트*, 볼드가 아닌 경우만)
+    const italicRegex = /\*(.+?)\*/g
+    let italicLastIndex = 0
+    let italicMatch
+
+    while ((italicMatch = italicRegex.exec(remaining)) !== null) {
+      // 이탤릭 앞의 텍스트
+      if (italicMatch.index > italicLastIndex) {
+        parts.push(remaining.substring(italicLastIndex, italicMatch.index))
+      }
+      // 이탤릭 텍스트
+      parts.push(
+        <em key={`italic-${keyIndex++}`} className="italic">
+          {italicMatch[1]}
+        </em>
+      )
+      italicLastIndex = italicMatch.index + italicMatch[0].length
+    }
+
+    // 남은 텍스트
+    if (italicLastIndex < remaining.length) {
+      parts.push(remaining.substring(italicLastIndex))
+    }
+  }
+
+  return parts.length > 0 ? <>{parts}</> : text
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -102,18 +197,18 @@ export default function ChatWidget() {
             <div className="text-base font-semibold">페이스 캘린더 상담</div>
             <div className="text-xs text-gray-500 mt-0.5">피부 목표를 알려주시면 맞춤 가이드를 드려요</div>
           </div>
-          <div className="p-4 space-y-2 overflow-auto flex-1 text-sm">
+          <div className="p-4 space-y-3 overflow-auto flex-1 text-sm">
             {messages.map((m, i) => (
               <div key={i} className={m.role === 'user' ? 'text-right' : 'text-left'}>
-                <span
-                  className={
-                    m.role === 'user'
-                      ? 'inline-block bg-[var(--color-primary)] text-[var(--color-primary-foreground)] px-3 py-2 rounded-2xl'
-                      : 'inline-block bg-[var(--color-card)] border border-[var(--color-border)] text-foreground px-3 py-2 rounded-2xl'
-                  }
-                >
-                  {m.content}
-                </span>
+                {m.role === 'user' ? (
+                  <span className="inline-block bg-[var(--color-primary)] text-[var(--color-primary-foreground)] px-3 py-2 rounded-2xl max-w-[80%] break-words">
+                    {m.content}
+                  </span>
+                ) : (
+                  <div className="inline-block bg-[var(--color-card)] border border-[var(--color-border)] text-foreground px-4 py-3 rounded-2xl max-w-[85%] break-words">
+                    {formatMessage(m.content)}
+                  </div>
+                )}
               </div>
             ))}
             {loading && (

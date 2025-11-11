@@ -121,44 +121,44 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative items-stretch">
           {/* Connection lines */}
           <div className="hidden md:block absolute top-24 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary via-primary to-primary opacity-20" />
 
           {steps.map((step, index) => (
-            <div key={index} className="relative">
+            <div key={index} className="relative flex flex-col">
               {step.title === "사진 촬영" ? (
                 <button
-                  className="w-full bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow focus:outline-none"
+                  className="w-full h-full bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow focus:outline-none flex flex-col"
                   onClick={() => setChooserOpen(true)}
                   aria-label="사진 촬영 시작"
                 >
-                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center">
+                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
                     <img src={step.image} alt={step.title} className="w-full h-full object-contain" />
                   </div>
-                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative">
+                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0">
                     <step.icon className="w-8 h-8 text-primary" />
                     <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
                       {step.number}
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
                 </button>
               ) : (
-                <div className="bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow">
-                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center">
+                <div className="bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow h-full flex flex-col">
+                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
                     <img src={step.image} alt={step.title} className="w-full h-full object-contain" />
                   </div>
-                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative">
+                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0">
                     <step.icon className="w-8 h-8 text-primary" />
                     <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
                       {step.number}
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
