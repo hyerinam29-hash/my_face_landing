@@ -22,11 +22,8 @@ export function FinalCTA() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base group">
-              내 피부 진단 지금 시작하기
+              <span className="animate-pulse">내 피부 진단 지금 시작하기</span>
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button size="lg" variant="outline" className="text-base bg-transparent">
-              더 알아보기
             </Button>
           </div>
 
