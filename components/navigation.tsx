@@ -87,6 +87,90 @@ export function Navigation() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Bell: 항상 표시 */}
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <button
+                  onClick={() => {
+                    try {
+                      const storedData = localStorage.getItem("routineNotification")
+                      console.log("[navigation] bell clicked, stored routineNotification:", storedData)
+                      if (storedData) {
+                        const data = JSON.parse(storedData)
+                        if (data.morningTime && data.nightTime) {
+                          setNotificationData({
+                            morningTime: data.morningTime,
+                            nightTime: data.nightTime
+                          })
+                          setHasNotification(Boolean(data.enabled))
+                        } else {
+                          setNotificationData(null)
+                          setHasNotification(false)
+                        }
+                      } else {
+                        setNotificationData(null)
+                        setHasNotification(false)
+                      }
+                    } catch {
+                      setNotificationData(null)
+                      setHasNotification(false)
+                    }
+                    setDialogOpen(true)
+                  }}
+                  className="relative p-2 hover:bg-muted rounded-md transition-colors"
+                  aria-label="알림 설정 보기"
+                >
+                  <Bell className={hasNotification ? "w-5 h-5 text-primary" : "w-5 h-5 text-muted-foreground"} />
+                  {hasNotification && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>}
+                </button>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>루틴 알림 설정</DialogTitle>
+                    <DialogDescription>
+                      설정된 알림 시간을 확인하거나 알림을 설정하세요.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {notificationData ? (
+                    <div className="space-y-4 py-4">
+                      <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Sun className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">아침 알림</p>
+                          <p className="text-lg font-semibold text-foreground">{notificationData.morningTime}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Moon className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">저녁 알림</p>
+                          <p className="text-lg font-semibold text-foreground">{notificationData.nightTime}</p>
+                        </div>
+                      </div>
+                      <div className="pt-2">
+                        <Link href="/routine">
+                          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                            알림 설정 변경하기
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 py-4">
+                      <p className="text-sm text-muted-foreground">
+                        알림이 아직 설정되지 않았습니다. 알림 시간을 설정하세요.
+                      </p>
+                      <Link href="/routine">
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                          알림 설정하러 가기
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
               <SignedOut>
                 <Link href="/login">
                   <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -95,72 +179,6 @@ export function Navigation() {
                 </Link>
               </SignedOut>
               <SignedIn>
-                {hasNotification && (
-                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                    <button
-                      onClick={() => {
-                        // Dialog 열 때 최신 데이터 확인
-                        const storedData = localStorage.getItem("routineNotification")
-                        if (storedData) {
-                          try {
-                            const data = JSON.parse(storedData)
-                            if (data.enabled && data.morningTime && data.nightTime) {
-                              setNotificationData({
-                                morningTime: data.morningTime,
-                                nightTime: data.nightTime
-                              })
-                            }
-                          } catch (e) {
-                            // 파싱 오류 무시
-                          }
-                        }
-                        setDialogOpen(true)
-                      }}
-                      className="relative p-2 hover:bg-muted rounded-md transition-colors"
-                      aria-label="알림 설정 보기"
-                    >
-                      <Bell className="w-5 h-5 text-primary" />
-                      <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-                    </button>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>루틴 알림 설정</DialogTitle>
-                        <DialogDescription>
-                          설정된 알림 시간을 확인하세요.
-                        </DialogDescription>
-                      </DialogHeader>
-                      {notificationData && (
-                        <div className="space-y-4 py-4">
-                          <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                              <Sun className="w-5 h-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm text-muted-foreground">아침 알림</p>
-                              <p className="text-lg font-semibold text-foreground">{notificationData.morningTime}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                              <Moon className="w-5 h-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm text-muted-foreground">저녁 알림</p>
-                              <p className="text-lg font-semibold text-foreground">{notificationData.nightTime}</p>
-                            </div>
-                          </div>
-                          <div className="pt-2">
-                            <Link href="/routine">
-                              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                                알림 설정 변경하기
-                              </Button>
-                            </Link>
-                          </div>
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                )}
                 <Link href="/cart">
                   <Button variant="ghost" size="icon" className="relative">
                     <ShoppingCart className="w-5 h-5" />
