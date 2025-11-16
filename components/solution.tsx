@@ -192,30 +192,30 @@ export function Solution() {
   ]
 
   return (
-    <section id="features" className="py-20 lg:py-32">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+    <section id="features" className="py-12 sm:py-16 md:py-20 lg:py-32">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 text-balance">
             페이스 캘린더가 해결해드립니다
           </h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed px-4 sm:px-0">
             AI 기반 분석으로 시간 절약, 경제적 효율, 맞춤형 케어를 한 번에 경험하세요.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-stretch">
           {features.map((feature, index) => {
             const card = (
               <div
-                className="group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all hover:shadow-xl h-full flex flex-col"
+                className="group relative bg-card rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-border hover:border-primary/50 transition-all hover:shadow-xl h-full flex flex-col"
               >
-                <div className="flex items-start gap-6 flex-1">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                <div className="flex items-start gap-4 sm:gap-6 flex-1">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
-                  <div className="space-y-3 flex-1">
-                    <h3 className="text-xl font-bold text-foreground">{feature.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                  <div className="space-y-2 sm:space-y-3 flex-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground">{feature.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               </div>

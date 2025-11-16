@@ -363,86 +363,87 @@ export default function RecommendationPage() {
   return (
     <main className="min-h-screen">
       <Navigation />
-      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
-          <section className="py-12">
-            <Link href="/#features" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
+          <section className="py-8 sm:py-12">
+            <Link href="/#features" className="inline-flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-foreground mb-6 sm:mb-8 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               <span>홈으로 돌아가기</span>
             </Link>
 
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                   맞춤형 화장품 추천
                 </h1>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl">
                   진단 결과에 따른 개인화된 화장품 큐레이션을 제공합니다.
-                  <br />
+                  <br className="hidden sm:block" />
+                  <span className="sm:hidden"> </span>
                   성분, 브랜드, 가격대별 다차원 필터로 나에게 딱 맞는 제품을 찾아보세요.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4">
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+              <div className="flex flex-wrap gap-3 sm:gap-4 pt-4">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Package className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">개인화 큐레이션</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">개인화 큐레이션</span>
                 </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Search className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">다차원 필터</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">다차원 필터</span>
                 </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">AI 추천</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">AI 추천</span>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Search Section */}
-          <section className="py-12">
-            <div className="space-y-4">
-              <Label htmlFor="search" className="text-base font-semibold">
+          <section className="py-8 sm:py-12">
+            <div className="space-y-3 sm:space-y-4">
+              <Label htmlFor="search" className="text-sm sm:text-base font-semibold">
                 제품 검색
               </Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="제품명, 성분, 브랜드로 검색..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-9 sm:pl-10 text-sm sm:text-base"
                 />
               </div>
             </div>
           </section>
 
           {/* Results Section */}
-          <section className="py-12">
+          <section className="py-8 sm:py-12">
             {searchQuery.trim() ? (
               // 검색 결과 표시
               <div>
-                <h2 className="font-serif text-3xl font-bold text-foreground mb-6">
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">
                   검색 결과: "{searchQuery}" ({searchResults.length}개)
                 </h2>
                 {searchResults.length === 0 ? (
-                  <div className="border border-border rounded-xl p-12 text-center bg-muted/30">
-                    <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-lg font-semibold text-foreground mb-2">검색 결과가 없습니다</p>
-                    <p className="text-sm text-muted-foreground">다른 검색어로 시도해보세요.</p>
+                  <div className="border border-border rounded-xl p-8 sm:p-12 text-center bg-muted/30">
+                    <Package className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-base sm:text-lg font-semibold text-foreground mb-2">검색 결과가 없습니다</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">다른 검색어로 시도해보세요.</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {searchResults.map((result, i) => (
                       <div
                         key={`${result.categoryKey}-${result.product.name}-${i}`}
-                        className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
+                        className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
                         style={{ animationDelay: `${i * 50}ms` }}
                       >
-                        <div className="aspect-square w-full mb-4 rounded-lg overflow-hidden bg-muted">
+                        <div className="aspect-square w-full mb-3 sm:mb-4 rounded-lg overflow-hidden bg-muted">
                           <img
                             src={result.product.image}
                             alt={result.product.name}
@@ -458,15 +459,15 @@ export default function RecommendationPage() {
                             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
                               {result.categoryLabel}
                             </span>
-                            <h3 className="font-semibold text-foreground mt-2 mb-1">{result.product.name}</h3>
-                            <p className="text-sm font-medium text-primary mb-1">{result.product.price}</p>
+                            <h3 className="font-semibold text-sm sm:text-base text-foreground mt-2 mb-1 line-clamp-2">{result.product.name}</h3>
+                            <p className="text-xs sm:text-sm font-medium text-primary mb-1">{result.product.price}</p>
                             <p className="text-xs text-muted-foreground">{result.product.volume}</p>
                           </div>
-                          <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+                          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                         </div>
                         <Button
                           variant="outline"
-                          className="w-full mt-4"
+                          className="w-full mt-3 sm:mt-4 text-xs sm:text-sm"
                           onClick={() => {
                             setSelectedProduct(result.product)
                             setIsDialogOpen(true)
@@ -482,11 +483,11 @@ export default function RecommendationPage() {
             ) : (
               // 카테고리별 추천 (검색어가 없을 때)
               <div>
-                <h2 className="font-serif text-3xl font-bold text-foreground mb-6">카테고리별 추천</h2>
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">카테고리별 추천</h2>
                 <Tabs defaultValue={categories[0].key} className="mt-2">
-                  <TabsList className="mb-6 grid w-full grid-cols-2 md:grid-cols-5">
+                  <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
                     {categories.map((c) => (
-                      <TabsTrigger key={c.key} value={c.key} className="text-sm">
+                      <TabsTrigger key={c.key} value={c.key} className="text-xs sm:text-sm">
                         {c.label}
                       </TabsTrigger>
                     ))}
@@ -495,29 +496,29 @@ export default function RecommendationPage() {
                   {filteredCategories.map((c) => (
                     <TabsContent key={c.key} value={c.key} className="mt-0">
                       {c.items.length === 0 ? (
-                        <div className="border border-border rounded-xl p-12 text-center bg-muted/30">
-                          <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-lg font-semibold text-foreground mb-2">검색 결과가 없습니다</p>
-                          <p className="text-sm text-muted-foreground">다른 검색어로 시도해보세요.</p>
+                        <div className="border border-border rounded-xl p-8 sm:p-12 text-center bg-muted/30">
+                          <Package className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-base sm:text-lg font-semibold text-foreground mb-2">검색 결과가 없습니다</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">다른 검색어로 시도해보세요.</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                           {c.items.map((name, i) => (
                             <div
                               key={i}
-                              className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
+                              className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
                               style={{ animationDelay: `${i * 50}ms` }}
                             >
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
-                                  <h3 className="font-semibold text-foreground mb-2">{name}</h3>
-                                  <p className="text-sm text-muted-foreground mb-4">맞춤형 추천 제품</p>
+                                  <h3 className="font-semibold text-sm sm:text-base text-foreground mb-2">{name}</h3>
+                                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">맞춤형 추천 제품</p>
                                 </div>
-                                <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+                                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                               </div>
                               <Button
                                 variant="outline"
-                                className="w-full mt-4"
+                                className="w-full mt-3 sm:mt-4 text-xs sm:text-sm"
                                 onClick={() => handleViewDetails(c.key, name)}
                               >
                                 자세히 보기
@@ -537,7 +538,7 @@ export default function RecommendationPage() {
 
       {/* Product Detail Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-[90vw] sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl">{selectedProduct?.name}</DialogTitle>
             <DialogDescription>맞춤형 추천 제품 상세 정보</DialogDescription>

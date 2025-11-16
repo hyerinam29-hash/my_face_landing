@@ -110,18 +110,18 @@ export function HowItWorks() {
   ]
 
   return (
-    <section id="how-it-works" className="py-20 lg:py-32 bg-gradient-to-b from-background to-muted/30">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+    <section id="how-it-works" className="py-12 sm:py-16 md:py-20 lg:py-32 bg-gradient-to-b from-background to-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 text-balance">
             3단계로 시작하는 스킨케어
           </h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed px-4 sm:px-0">
             복잡한 과정 없이 간단하게 나만의 맞춤 루틴을 만들어보세요.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative items-stretch">
+        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 relative items-stretch">
           {/* Connection lines */}
           <div className="hidden md:block absolute top-24 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary via-primary to-primary opacity-20" />
 
@@ -129,38 +129,38 @@ export function HowItWorks() {
             <div key={index} className="relative flex flex-col">
               {step.title === "사진 촬영" ? (
                 <button
-                  className="w-full h-full bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow focus:outline-none flex flex-col"
+                  className="w-full h-full bg-card rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-border text-center space-y-4 sm:space-y-6 hover:shadow-lg transition-shadow focus:outline-none flex flex-col"
                   onClick={() => setChooserOpen(true)}
                   aria-label="사진 촬영 시작"
                 >
-                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
+                  <div className="w-full h-40 sm:h-48 mb-4 rounded-lg sm:rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
                     <img src={step.image} alt={step.title} className="w-full h-full object-contain" />
                   </div>
-                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0">
-                    <step.icon className="w-8 h-8 text-primary" />
-                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
+                  <div className="inline-flex w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0 mx-auto">
+                    <step.icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground text-xs sm:text-sm font-bold flex items-center justify-center">
                       {step.number}
                     </div>
                   </div>
-                  <div className="space-y-3 flex-1">
-                    <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                  <div className="space-y-2 sm:space-y-3 flex-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground">{step.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
                 </button>
               ) : (
-                <div className="bg-card rounded-2xl p-8 border border-border text-center space-y-6 hover:shadow-lg transition-shadow h-full flex flex-col">
-                  <div className="w-full h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
+                <div className="bg-card rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-border text-center space-y-4 sm:space-y-6 hover:shadow-lg transition-shadow h-full flex flex-col">
+                  <div className="w-full h-40 sm:h-48 mb-4 rounded-lg sm:rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center flex-shrink-0">
                     <img src={step.image} alt={step.title} className="w-full h-full object-contain" />
                   </div>
-                  <div className="inline-flex w-16 h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0">
-                    <step.icon className="w-8 h-8 text-primary" />
-                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
+                  <div className="inline-flex w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 items-center justify-center relative flex-shrink-0 mx-auto">
+                    <step.icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground text-xs sm:text-sm font-bold flex items-center justify-center">
                       {step.number}
                     </div>
                   </div>
-                  <div className="space-y-3 flex-1">
-                    <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                  <div className="space-y-2 sm:space-y-3 flex-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground">{step.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               )}
@@ -169,7 +169,7 @@ export function HowItWorks() {
 
           {/* 선택 모달: 카메라/이미지 업로드 */}
           <Dialog open={chooserOpen} onOpenChange={setChooserOpen}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-[90vw] sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>사진 입력 방법 선택</DialogTitle>
                 <DialogDescription>카메라로 촬영하거나, 기기에서 이미지를 선택하세요.</DialogDescription>
@@ -190,7 +190,7 @@ export function HowItWorks() {
 
           {/* 카메라 모달 */}
           <Dialog open={cameraOpen} onOpenChange={setCameraOpen}>
-            <DialogContent className="max-w-xl">
+            <DialogContent className="max-w-[90vw] sm:max-w-xl">
               <DialogHeader>
                 <DialogTitle>카메라로 촬영</DialogTitle>
                 <DialogDescription>얼굴을 화면 가운데에 맞춘 뒤 촬영하세요.</DialogDescription>
@@ -224,7 +224,7 @@ export function HowItWorks() {
 
           {/* 이미지 업로드 모달 */}
           <Dialog open={uploadOpen} onOpenChange={(o) => { setUploadOpen(o); if (!o) clearPreview() }}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-[90vw] sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>이미지 업로드</DialogTitle>
                 <DialogDescription>기기에 저장된 얼굴 사진을 선택하세요.</DialogDescription>
@@ -255,7 +255,7 @@ export function HowItWorks() {
 
           {/* AI 분석 모달 */}
           <Dialog open={analyzeOpen} onOpenChange={setAnalyzeOpen}>
-            <DialogContent className="max-w-xl">
+            <DialogContent className="max-w-[90vw] sm:max-w-xl">
               <DialogHeader>
                 <DialogTitle>AI 분석</DialogTitle>
                 <DialogDescription>피부 타입, 트러블, 유수분 밸런스를 5초 내로 분석합니다.</DialogDescription>

@@ -5,9 +5,10 @@ import { ArrowLeft, ShoppingCart, Trash2, Package, CreditCard } from "lucide-rea
 import { Button } from "@/components/ui/button"
 import { Navigation } from "@/components/navigation"
 import { useUser } from "@clerk/nextjs"
-import { getCart, removeFromCart } from "@/actions/supabase"
+import { getCart, removeFromCart, savePendingOrder } from "@/actions/supabase"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
 
 type CartItem = {
   id: string
@@ -97,11 +98,20 @@ export default function CartPage() {
   }
 
   // 전체 결제하기
-  function handleCheckout() {
+  async function handleCheckout() {
     if (cartItems.length === 0) {
       toast({
         title: "장바구니가 비어있습니다",
         description: "결제할 제품이 없습니다.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!user) {
+      toast({
+        title: "로그인 필요",
+        description: "결제하려면 로그인이 필요합니다.",
         variant: "destructive",
       })
       return
@@ -113,22 +123,59 @@ export default function CartPage() {
       totalPrice: total 
     })
 
-    toast({
-      title: "결제 준비 중",
-      description: `총 ${total.toLocaleString()}원의 제품을 결제합니다.`,
-    })
-
-    // 실제 결제 시스템 연동은 여기에 구현
-    // 예: 결제 페이지로 이동, 결제 API 호출 등
-    // 현재는 시뮬레이션
-    setTimeout(() => {
-      toast({
-        title: "결제 완료",
-        description: "결제가 완료되었습니다. 감사합니다!",
+    try {
+      // 주문번호 생성 (UUID 형식)
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
+      
+      // 주문 정보 임시 저장 (보안을 위해)
+      await savePendingOrder({
+        userId: user.id,
+        orderId: orderId,
+        amount: total,
+        cartItems: cartItems
       })
-      // 결제 완료 후 장바구니 비우기
-      setCartItems([])
-    }, 2000)
+      console.log("[checkout] Pending order saved", { orderId })
+
+      // 토스 페이먼츠 SDK 초기화
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY
+      if (!clientKey) {
+        throw new Error("토스 페이먼츠 클라이언트 키가 설정되지 않았습니다.")
+      }
+
+      const tossPayments = await loadTossPayments(clientKey)
+      const payment = tossPayments.payment({
+        customerKey: user.id
+      })
+
+      // 주문명 생성
+      const orderName = cartItems.length === 1 
+        ? cartItems[0].name 
+        : `${cartItems[0].name} 외 ${cartItems.length - 1}건`
+
+      // 결제 요청
+      await payment.requestPayment({
+        method: "CARD",
+        amount: {
+          currency: "KRW",
+          value: total
+        },
+        orderId: orderId,
+        orderName: orderName,
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
+        customerEmail: user.emailAddresses[0]?.emailAddress || "",
+        customerName: user.fullName || user.firstName || "고객"
+      })
+
+      console.log("[checkout] Payment request sent", { orderId })
+    } catch (error: any) {
+      console.error("[checkout] Error during checkout", error)
+      toast({
+        title: "결제 오류",
+        description: error.message || "결제 요청 중 오류가 발생했습니다.",
+        variant: "destructive",
+      })
+    }
   }
 
   if (!isLoaded) {
@@ -169,38 +216,38 @@ export default function CartPage() {
   return (
     <main className="min-h-screen">
       <Navigation />
-      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <section className="py-12">
-            <Link href="/recommendation" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
+          <section className="py-8 sm:py-12">
+            <Link href="/recommendation" className="inline-flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-foreground mb-6 sm:mb-8 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               <span>추천 페이지로 돌아가기</span>
             </Link>
 
-            <div className="space-y-4">
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+            <div className="space-y-3 sm:space-y-4">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                 장바구니
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
                 찜한 제품 목록입니다.
               </p>
             </div>
           </section>
 
           {/* Cart Items */}
-          <section className="py-12">
+          <section className="py-8 sm:py-12">
             {isLoading ? (
-              <div className="text-center py-20">
-                <p className="text-muted-foreground">로딩 중...</p>
+              <div className="text-center py-12 sm:py-20">
+                <p className="text-sm sm:text-base text-muted-foreground">로딩 중...</p>
               </div>
             ) : cartItems.length === 0 ? (
-              <div className="border border-border rounded-xl p-12 text-center bg-muted/30">
-                <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg font-semibold text-foreground mb-2">장바구니가 비어있습니다</p>
-                <p className="text-sm text-muted-foreground mb-6">제품을 찜해보세요.</p>
+              <div className="border border-border rounded-xl p-8 sm:p-12 text-center bg-muted/30">
+                <Package className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-base sm:text-lg font-semibold text-foreground mb-2">장바구니가 비어있습니다</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">제품을 찜해보세요.</p>
                 <Link href="/recommendation">
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm sm:text-base">
                     제품 둘러보기
                   </Button>
                 </Link>
@@ -210,9 +257,9 @@ export default function CartPage() {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-xl transition-all"
+                    className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all"
                   >
-                    <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
                       {/* Product Image */}
                       <div className="aspect-square w-full md:w-32 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                         <img
@@ -228,8 +275,8 @@ export default function CartPage() {
 
                       {/* Product Info */}
                       <div className="flex-1 space-y-2">
-                        <h3 className="font-semibold text-lg text-foreground">{item.name}</h3>
-                        <div className="flex flex-wrap gap-4 text-sm">
+                        <h3 className="font-semibold text-base sm:text-lg text-foreground">{item.name}</h3>
+                        <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm">
                           <div>
                             <span className="text-muted-foreground">가격: </span>
                             <span className="font-semibold text-foreground">{item.price}</span>
@@ -242,10 +289,11 @@ export default function CartPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col md:flex-row gap-2">
+                      <div className="flex flex-row md:flex-col gap-2">
                         <Button
                           variant="outline"
                           onClick={() => handlePurchaseItem(item.image)}
+                          className="text-xs sm:text-sm flex-1 md:flex-none"
                         >
                           바로 구매
                         </Button>
@@ -253,8 +301,9 @@ export default function CartPage() {
                           variant="outline"
                           onClick={() => handleRemove(item.id)}
                           disabled={removingIds.has(item.id)}
+                          className="text-xs sm:text-sm flex-1 md:flex-none"
                         >
-                          <Trash2 className="w-4 h-4 mr-2" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           {removingIds.has(item.id) ? "삭제 중..." : "삭제"}
                         </Button>
                       </div>
@@ -267,18 +316,18 @@ export default function CartPage() {
 
           {/* Checkout Section */}
           {!isLoading && cartItems.length > 0 && (
-            <section className="py-12 border-t border-border">
-              <div className="bg-card border border-border rounded-xl p-6 shadow-md">
-                <h2 className="font-serif text-2xl font-bold text-foreground mb-6">결제 정보</h2>
+            <section className="py-8 sm:py-12 border-t border-border">
+              <div className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md">
+                <h2 className="font-serif text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">결제 정보</h2>
                 
-                <div className="space-y-4 mb-6">
+                <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">제품 수</span>
-                    <span className="font-semibold text-foreground">{cartItems.length}개</span>
+                    <span className="text-sm sm:text-base text-muted-foreground">제품 수</span>
+                    <span className="text-sm sm:text-base font-semibold text-foreground">{cartItems.length}개</span>
                   </div>
-                  <div className="flex justify-between items-center text-lg">
+                  <div className="flex justify-between items-center text-base sm:text-lg">
                     <span className="font-semibold text-foreground">총 결제 금액</span>
-                    <span className="font-bold text-primary text-2xl">
+                    <span className="font-bold text-primary text-xl sm:text-2xl">
                       {calculateTotal().toLocaleString()}원
                     </span>
                   </div>
@@ -286,15 +335,15 @@ export default function CartPage() {
 
                 <div className="pt-4 border-t border-border">
                   <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-sm sm:text-base sm:text-lg py-4 sm:py-6"
                     onClick={handleCheckout}
                   >
-                    <CreditCard className="w-5 h-5 mr-2" />
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     결제하기
                   </Button>
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-4 text-center">
+                <p className="text-xs text-muted-foreground mt-3 sm:mt-4 text-center">
                   결제하기 버튼을 클릭하면 결제가 진행됩니다.
                 </p>
               </div>

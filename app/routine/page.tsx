@@ -44,51 +44,52 @@ export default function RoutinePage() {
   return (
     <main className="min-h-screen">
       <Navigation />
-      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
-          <section className="py-12">
-            <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
+          <section className="py-8 sm:py-12">
+            <Link href="/" className="inline-flex items-center gap-2 text-sm sm:text-base text-muted-foreground hover:text-foreground mb-6 sm:mb-8 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               <span>홈으로 돌아가기</span>
             </Link>
 
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                   시간별 루틴 알림
                 </h1>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl">
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl">
                   피부 타입별 최적 케어 타이밍을 분석하여 알림을 제공합니다.
-                  <br />
+                  <br className="hidden sm:block" />
+                  <span className="sm:hidden"> </span>
                   아침/저녁 루틴 알림 및 제품별 사용 순서를 안내합니다.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4">
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+              <div className="flex flex-wrap gap-3 sm:gap-4 pt-4">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Bell className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">자동 알림</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">자동 알림</span>
                 </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Clock className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">맞춤형 타이밍</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">맞춤형 타이밍</span>
                 </div>
-                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-2">
+                <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 sm:px-4 py-2">
                   <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">AI 추천</span>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">AI 추천</span>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Results Section */}
-          <section className="py-12">
-            <h2 className="font-serif text-3xl font-bold text-foreground mb-6">피부 타입별 루틴</h2>
+          <section className="py-8 sm:py-12">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">피부 타입별 루틴</h2>
             <Tabs defaultValue={skinTypes[0].key} className="mt-2">
-              <TabsList className="mb-6 grid w-full grid-cols-2 md:grid-cols-4">
+              <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 sm:grid-cols-4">
                 {skinTypes.map((t) => (
-                  <TabsTrigger key={t.key} value={t.key}>
+                  <TabsTrigger key={t.key} value={t.key} className="text-xs sm:text-sm">
                     {t.label}
                   </TabsTrigger>
                 ))}
@@ -97,34 +98,34 @@ export default function RoutinePage() {
               {skinTypes.map((t) => (
                 <TabsContent key={t.key} value={t.key} className="mt-0">
                   <Tabs defaultValue="morning" className="mt-0">
-                    <TabsList className="mb-6">
-                      <TabsTrigger value="morning" className="flex items-center gap-2">
-                        <Sun className="w-4 h-4" />
+                    <TabsList className="mb-4 sm:mb-6">
+                      <TabsTrigger value="morning" className="flex items-center gap-2 text-xs sm:text-sm">
+                        <Sun className="w-3 h-3 sm:w-4 sm:h-4" />
                         아침 루틴
                       </TabsTrigger>
-                      <TabsTrigger value="night" className="flex items-center gap-2">
-                        <Moon className="w-4 h-4" />
+                      <TabsTrigger value="night" className="flex items-center gap-2 text-xs sm:text-sm">
+                        <Moon className="w-3 h-3 sm:w-4 sm:h-4" />
                         저녁 루틴
                       </TabsTrigger>
                     </TabsList>
                     <TabsContent value="morning" className="mt-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {routine[t.key].morning.map((step, i) => (
                           <div
                             key={i}
-                            className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
+                            className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
                             style={{ animationDelay: `${i * 100}ms` }}
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <span className="text-primary font-bold">{i + 1}</span>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <span className="text-primary font-bold text-sm sm:text-base">{i + 1}</span>
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <Clock className="w-4 h-4 text-muted-foreground" />
+                                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                                   <span className="text-xs text-muted-foreground uppercase tracking-wide">Step {i + 1}</span>
                                 </div>
-                                <p className="text-foreground font-medium">{step}</p>
+                                <p className="text-sm sm:text-base text-foreground font-medium">{step}</p>
                               </div>
                             </div>
                           </div>
@@ -132,23 +133,23 @@ export default function RoutinePage() {
                       </div>
                     </TabsContent>
                     <TabsContent value="night" className="mt-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {routine[t.key].night.map((step, i) => (
                           <div
                             key={i}
-                            className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
+                            className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all animate-in fade-in slide-in-from-bottom-4"
                             style={{ animationDelay: `${i * 100}ms` }}
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <span className="text-primary font-bold">{i + 1}</span>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <span className="text-primary font-bold text-sm sm:text-base">{i + 1}</span>
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <Clock className="w-4 h-4 text-muted-foreground" />
+                                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                                   <span className="text-xs text-muted-foreground uppercase tracking-wide">Step {i + 1}</span>
                                 </div>
-                                <p className="text-foreground font-medium">{step}</p>
+                                <p className="text-sm sm:text-base text-foreground font-medium">{step}</p>
                               </div>
                             </div>
                           </div>
@@ -162,9 +163,9 @@ export default function RoutinePage() {
           </section>
 
           {/* Alert Settings Section */}
-          <section className="py-12">
-            <h2 className="font-serif text-3xl font-bold text-foreground mb-6">알림 설정</h2>
-            <div className="bg-card border border-border rounded-xl p-8 shadow-md">
+          <section className="py-8 sm:py-12">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6">알림 설정</h2>
+            <div className="bg-card border border-border rounded-lg sm:rounded-xl p-6 sm:p-8 shadow-md">
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <Bell className="w-6 h-6 text-primary flex-shrink-0 mt-1" />

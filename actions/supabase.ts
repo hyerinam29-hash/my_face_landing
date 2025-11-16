@@ -262,4 +262,238 @@ export async function removeFromCart(cartId: string): Promise<void> {
   console.log("[cart] Supabase delete success")
 }
 
+// 주문 임시 저장 (결제 요청 전)
+export async function savePendingOrder(data: {
+  userId: string
+  orderId: string
+  amount: number
+  cartItems: any[]
+}): Promise<void> {
+  const { userId, orderId, amount, cartItems } = data
+
+  if (!userId || !orderId || !amount || !cartItems || cartItems.length === 0) {
+    throw new Error("주문 정보가 올바르지 않습니다.")
+  }
+
+  const sanitize = (v: string | undefined) => (v || "").trim().replace(/,+$/, "")
+  const supabaseUrl = sanitize(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const supabaseKey = sanitize(
+    process.env.SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[order] Supabase env missing")
+    throw new Error("서버 환경변수가 누락되었습니다.")
+  }
+
+  const payload = {
+    user_id: userId,
+    order_id: orderId,
+    amount: amount,
+    cart_items: cartItems
+  }
+  console.log("[order] saving pending order", { orderId, userId, amount })
+
+  let res: Response
+  try {
+    res = await fetch(`${supabaseUrl}/rest/v1/pending_orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(payload)
+    })
+  } catch (e: any) {
+    console.error("[order] Supabase network error", e?.message || e)
+    throw new Error("주문 임시 저장 중 네트워크 오류가 발생했습니다.")
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "")
+    console.error("[order] Supabase insert error", res.status, errorText)
+    throw new Error(`주문 임시 저장 중 오류가 발생했습니다. (상태 코드: ${res.status})`)
+  }
+
+  const pendingInsert = await res.json().catch(() => null)
+  console.log("[order] Supabase pending order saved", { id: Array.isArray(pendingInsert) ? pendingInsert[0]?.id : undefined })
+}
+
+// 임시 주문 정보 조회 (금액 검증용)
+export async function getPendingOrder(orderId: string): Promise<{
+  userId: string
+  orderId: string
+  amount: number
+  cartItems: any[]
+} | null> {
+  if (!orderId) {
+    return null
+  }
+
+  const sanitize = (v: string | undefined) => (v || "").trim().replace(/,+$/, "")
+  const supabaseUrl = sanitize(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const supabaseKey = sanitize(
+    process.env.SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[order] Supabase env missing")
+    return null
+  }
+
+  console.log("[order] fetching pending order", { orderId })
+
+  let res: Response
+  try {
+    res = await fetch(`${supabaseUrl}/rest/v1/pending_orders?order_id=eq.${orderId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`
+      }
+    })
+  } catch (e: any) {
+    console.error("[order] Supabase network error", e?.message || e)
+    return null
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "")
+    console.error("[order] Supabase fetch error", res.status, errorText)
+    return null
+  }
+
+  const data = await res.json().catch(() => [])
+  if (Array.isArray(data) && data.length > 0) {
+    const order = data[0]
+    return {
+      userId: order.user_id,
+      orderId: order.order_id,
+      amount: order.amount,
+      cartItems: order.cart_items
+    }
+  }
+  return null
+}
+
+// 임시 주문 삭제 (결제 승인 성공 후)
+export async function deletePendingOrder(orderId: string): Promise<void> {
+  if (!orderId) {
+    throw new Error("주문번호가 필요합니다.")
+  }
+
+  const sanitize = (v: string | undefined) => (v || "").trim().replace(/,+$/, "")
+  const supabaseUrl = sanitize(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const supabaseKey = sanitize(
+    process.env.SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[order] Supabase env missing")
+    throw new Error("서버 환경변수가 누락되었습니다.")
+  }
+
+  console.log("[order] deleting pending order", { orderId })
+
+  let res: Response
+  try {
+    res = await fetch(`${supabaseUrl}/rest/v1/pending_orders?order_id=eq.${orderId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`
+      }
+    })
+  } catch (e: any) {
+    console.error("[order] Supabase network error", e?.message || e)
+    throw new Error("임시 주문 삭제 중 네트워크 오류가 발생했습니다.")
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "")
+    console.error("[order] Supabase delete error", res.status, errorText)
+    throw new Error("임시 주문 삭제 중 오류가 발생했습니다.")
+  }
+
+  console.log("[order] Supabase pending order deleted")
+}
+
+// 최종 주문 정보 저장 (결제 승인 성공 후)
+export async function saveOrder(data: {
+  userId: string
+  orderId: string
+  paymentKey: string
+  totalAmount: number
+  items: any[]
+}): Promise<void> {
+  const { userId, orderId, paymentKey, totalAmount, items } = data
+
+  if (!userId || !orderId || !paymentKey || !totalAmount || !items || items.length === 0) {
+    throw new Error("주문 정보가 올바르지 않습니다.")
+  }
+
+  const sanitize = (v: string | undefined) => (v || "").trim().replace(/,+$/, "")
+  const supabaseUrl = sanitize(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)
+  const supabaseKey = sanitize(
+    process.env.SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[order] Supabase env missing")
+    throw new Error("서버 환경변수가 누락되었습니다.")
+  }
+
+  const payload = {
+    user_id: userId,
+    order_id: orderId,
+    payment_key: paymentKey,
+    total_amount: totalAmount,
+    status: "DONE",
+    items: items
+  }
+  console.log("[order] saving final order", { orderId, userId, paymentKey, totalAmount })
+
+  let res: Response
+  try {
+    res = await fetch(`${supabaseUrl}/rest/v1/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": `Bearer ${supabaseKey}`,
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(payload)
+    })
+  } catch (e: any) {
+    console.error("[order] Supabase network error", e?.message || e)
+    throw new Error("주문 저장 중 네트워크 오류가 발생했습니다.")
+  }
+
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "")
+    console.error("[order] Supabase insert error", res.status, errorText)
+    throw new Error(`주문 저장 중 오류가 발생했습니다. (상태 코드: ${res.status})`)
+  }
+
+  const orderInsert = await res.json().catch(() => null)
+  console.log("[order] Supabase order saved", { id: Array.isArray(orderInsert) ? orderInsert[0]?.id : undefined })
+}
+
 

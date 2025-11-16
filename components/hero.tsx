@@ -38,19 +38,20 @@ export function Hero() {
         </svg>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
           {/* Left content */}
-          <div className="space-y-8 max-w-xl">
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-primary tracking-wide uppercase">AI 스킨케어 루틴</p>
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
+          <div className="space-y-6 md:space-y-8 max-w-xl">
+            <div className="space-y-3 md:space-y-4">
+              <p className="text-xs sm:text-sm font-medium text-primary tracking-wide uppercase">AI 스킨케어 루틴</p>
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
                 사진 한 장으로 시작하는
                 <span className="block">나만의 스킨케어 루틴</span>
               </h1>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 AI가 분석한 내 피부, 딱 맞는 화장품만 추천받으세요.
-                <br />
+                <br className="hidden sm:block" />
+                <span className="sm:hidden"> </span>
                 중복 구매는 이제 그만, 효율적인 루틴 관리를 시작하세요.
               </p>
             </div>
@@ -58,12 +59,12 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base group">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm sm:text-base group w-full sm:w-auto">
                     <span className="animate-pulse">7일 무료로 시작하기</span>
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[90vw] sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>7일 무료 체험 시작</DialogTitle>
                     <DialogDescription>
@@ -93,27 +94,27 @@ export function Hero() {
               </Dialog>
             </div>
 
-            <div className="flex items-center gap-8 pt-4">
+            <div className="flex items-center gap-4 sm:gap-8 pt-4">
               <div>
-                <p className="text-2xl font-bold text-foreground">10,000+</p>
-                <p className="text-sm text-muted-foreground">활성 사용자</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">10,000+</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">활성 사용자</p>
               </div>
-              <div className="h-12 w-px bg-border" />
+              <div className="h-10 sm:h-12 w-px bg-border" />
               <div>
-                <p className="text-2xl font-bold text-foreground">4.9/5</p>
-                <p className="text-sm text-muted-foreground">평균 만족도</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">4.9/5</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">평균 만족도</p>
               </div>
             </div>
           </div>
 
           {/* Right content - Product mockup */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/30 to-accent/20 rounded-[3rem] blur-3xl" />
-            <div className="relative bg-card/50 backdrop-blur-sm rounded-3xl p-8 border border-border shadow-2xl">
+          <div className="relative mt-8 lg:mt-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/30 to-accent/20 rounded-[2rem] sm:rounded-[3rem] blur-3xl" />
+            <div className="relative bg-card/50 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-border shadow-2xl">
               <img
                 src="/modern-skincare-app-interface-showing-ai-skin-anal.jpg"
                 alt="Face Calendar App Interface"
-                className="w-full h-auto rounded-2xl"
+                className="w-full h-auto rounded-xl sm:rounded-2xl"
               />
             </div>
           </div>
