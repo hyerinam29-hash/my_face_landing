@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,7 @@ import { removeFromCart } from "@/actions/supabase"
 import { CheckCircle, Loader2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user, isLoaded } = useUser()
@@ -177,6 +177,24 @@ export default function PaymentSuccessPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen">
+        <Navigation />
+        <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16">
+          <div className="max-w-4xl mx-auto text-center py-20">
+            <Loader2 className="w-16 h-16 text-primary mx-auto animate-spin" />
+            <p className="text-muted-foreground mt-4">로딩 중...</p>
+          </div>
+        </div>
+      </main>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   )
 }
 
