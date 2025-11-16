@@ -1,12 +1,13 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { AlertCircle } from "lucide-react"
 import Link from "next/link"
 
-export default function PaymentFailPage() {
+function PaymentFailContent() {
   const searchParams = useSearchParams()
   const errorCode = searchParams.get("code")
   const errorMessage = searchParams.get("message")
@@ -63,6 +64,25 @@ export default function PaymentFailPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen">
+        <Navigation />
+        <div className="container mx-auto px-4 lg:px-8 pt-24 pb-16">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center py-20">
+              <p className="text-lg text-muted-foreground">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    }>
+      <PaymentFailContent />
+    </Suspense>
   )
 }
 
