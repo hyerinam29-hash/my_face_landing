@@ -68,11 +68,14 @@ export function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity min-w-0">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
               <span className="text-primary-foreground font-serif font-bold text-lg">F</span>
             </div>
-            <span className="font-serif text-xl lg:text-2xl font-semibold text-foreground">페이스 캘린더</span>
+            <span className="font-serif text-xl lg:text-2xl font-semibold text-foreground truncate">
+              <span className="hidden md:inline">페이스 캘린더</span>
+              <span className="md:hidden">페.캘</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

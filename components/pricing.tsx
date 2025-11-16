@@ -14,7 +14,7 @@ export function Pricing() {
   ]
 
   return (
-    <section id="pricing" className="py-20 lg:py-32">
+    <section id="pricing" className="py-20 lg:py-32 scroll-mt-24 md:scroll-mt-28">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">

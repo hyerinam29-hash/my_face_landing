@@ -1,0 +1,45 @@
+name: face_calendar_app
+description: Face Calendar - Flutter hybrid shell (WebView) for Android & iOS
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_inappwebview: ^6.0.0
+  url_launcher: ^6.3.0
+  connectivity_plus: ^6.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+
+# Splash configuration (image optional). Color-only splash works without assets.
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#111111"
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#111111"
+  android: true
+  ios: true
+  web: false
+
+# Launcher icon configuration (provide assets/icon.png later, then run the command in README)
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon.png"
+
+
